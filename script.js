@@ -51,18 +51,36 @@ const gameControl = (function () {
     //TODO
     const winCheck = () => {
         const board = gameBoard.getBoard();
+        let win = false;
         for (let i = 0; i < 3; i++) {
+            // check row wins
             if (board[i].every(cell => cell.getValue().getToken)) {
-                const winner = board[i].every(cell => cell.getValue().getToken() === board[i][0].getValue().getToken());
-                return winner;
+                if (board[i].every(cell => cell.getValue().getToken() === board[i][0].getValue().getToken())) win = true;
             }
+            // check col wins
             const firstCol = board[0][i].getValue().getToken ? board[0][i] : null;
-            for (let j = 1; j < 3; j++) {
-                if (!firstCol || firstCol.getValue().getToken() !== board[j][i].getValue().getToken()) {
-                    return false;
+            if (firstCol && board[1][i].getValue().getToken && firstCol.getValue().getToken() === board[1][i].getValue().getToken()) {
+                if (board[2][i].getValue().getToken) {
+                    if (firstCol.getValue().getToken() === board[2][i].getValue().getToken()) win = true;
                 }
             }
         }
+        // check diagonal wins
+        const l1 = board[0][0].getValue().getToken ? board[0][0].getValue().getToken() : null;
+        const center = board[1][1].getValue().getToken ? board[1][1].getValue().getToken() : null;
+        const r3 = board[2][2].getValue().getToken ? board[2][2].getValue().getToken() : null;
+        const r1 = board[0][2].getValue().getToken ? board[0][2].getValue().getToken() : null;
+        const l3 = board[2][0].getValue().getToken ? board[2][0].getValue().getToken() : null;
+
+        if (l1 && center && r3) {
+            if (l1 === center && l1 === r3) win = true;
+        }
+
+        if (r1 && center && l3) {
+            if (r1 === center && r1 === l3) win = true;
+        }
+
+        return win;
         // const rowWin = board.map(row => {
         //     if (row.every(cell => cell.getValue().getToken)) {
         //         return row.every(cell => cell.getValue().getToken() === row[0].getValue().getToken());
@@ -101,9 +119,28 @@ function createPlayer(inputName, tokenType) {
 
 
 // run
+console.log("prova row")
 gameBoard.reset();
-gameControl.playRound([0, 0]);
-gameControl.playRound([1, 1]);
+gameControl.playRound([1, 0]);
 gameControl.playRound([0, 1]);
+gameControl.playRound([1, 1]);
 gameControl.playRound([2, 1]);
+gameControl.playRound([1, 2]);
+gameControl.playRound([0, 0]);
+
+gameBoard.reset();
+console.log("prova col")
+gameControl.playRound([1, 1]);
+gameControl.playRound([1, 2]);
+gameControl.playRound([0, 0]);
 gameControl.playRound([0, 2]);
+gameControl.playRound([2, 0]);
+gameControl.playRound([2, 2]);
+
+gameBoard.reset();
+console.log("prova diagonale")
+gameControl.playRound([0, 0]);
+gameControl.playRound([0, 1]);
+gameControl.playRound([1, 1]);
+gameControl.playRound([2, 0]);
+gameControl.playRound([2, 2]);

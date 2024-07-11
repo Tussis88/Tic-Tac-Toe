@@ -43,13 +43,14 @@ const gameControl = (function () {
     currentPlayer = currentPlayer === player1 ? player2 : player1;
   };
   const playRound = (cell) => {
+    const [row, col] = cell;
+    const board = gameBoard.getBoard();
+    if (board[row][col].getValue().getToken || winCheck()) return;
     console.log(`${getCurrentPlayer().getName()}'s turn.`);
     gameBoard.addToken(cell, getCurrentPlayer());
     gameBoard.printBoard();
-    if (winCheck()) {
-      console.log(`${getCurrentPlayer().getName()} is the winner`);
     }
-    switchTurn();
+    if (!winCheck()) switchTurn();
     console.log(`next turn: ${getCurrentPlayer().getName()}`);
   };
 
@@ -106,43 +107,76 @@ function createPlayer(inputName, tokenType) {
   return { getName, getPoints, getToken, setPoints };
 }
 
-const DomLogic = (function () {
+const domLogic = (function () {
   const playerTurnDiv = document.querySelector(".turn");
   const boardDiv = document.querySelector(".board");
+  const dialogScreen = document.querySelector(".dialog");
 
-  const UpdateScreen = () => {
+  const updateScreen = () => {
     boardDiv.textContent = "";
     const board = gameBoard.getBoard();
     const activePlayer = gameControl.getCurrentPlayer();
 
-    playerTurnDiv.textContent = `${activePlayer}'s turn`;
+    playerTurnDiv.textContent = `${activePlayer.getName()}'s turn`;
+
+    board.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("cell");
+        cellButton.dataset.coordinates = JSON.stringify([rowIndex, colIndex]);
+        cellButton.innerText = cell.getValue().getToken
+          ? cell.getValue().getToken()
+          : " ";
+        boardDiv.appendChild(cellButton);
+      });
+    });
+
+    if (gameControl.winCheck()) {
+      dialogScreen.showModal();
+      dialogScreen.innerText= `${activePlayer.getName()} wins`;
+    }
+  };
+
+  function clickCell(e) {
+    const selectedCell = JSON.parse(e.target.dataset.coordinates);
+    if (!selectedCell) return;
+    console.log(typeof selectedCell);
+
+    gameControl.playRound(selectedCell);
+    updateScreen();
   }
+
+  boardDiv.addEventListener("click", clickCell);
+  return { updateScreen };
 })();
 
+gameBoard.reset();
+domLogic.updateScreen();
 ///////////////
 // run
-console.log("prova row");
-gameBoard.reset();
-gameControl.playRound([1, 0]);
-gameControl.playRound([0, 1]);
-gameControl.playRound([1, 1]);
-gameControl.playRound([2, 1]);
-gameControl.playRound([1, 2]);
-gameControl.playRound([0, 0]);
-
-gameBoard.reset();
-console.log("prova col");
-gameControl.playRound([1, 1]);
-gameControl.playRound([1, 2]);
-gameControl.playRound([0, 0]);
-gameControl.playRound([0, 2]);
-gameControl.playRound([2, 0]);
-gameControl.playRound([2, 2]);
-
-gameBoard.reset();
-console.log("prova diagonale");
-gameControl.playRound([0, 0]);
-gameControl.playRound([0, 1]);
-gameControl.playRound([1, 1]);
-gameControl.playRound([2, 0]);
-gameControl.playRound([2, 2]);
+// console.log("prova row");
+// gameBoard.reset();
+// gameControl.playRound([1, 0]);
+// gameControl.playRound([0, 1]);
+// gameControl.playRound([1, 1]);
+// gameControl.playRound([2, 1]);
+// gameControl.playRound([1, 2]);
+// gameControl.playRound([0, 0]);
+// domLogic.updateScreen();
+//
+// gameBoard.reset();
+// console.log("prova col");
+// gameControl.playRound([1, 1]);
+// gameControl.playRound([1, 2]);
+// gameControl.playRound([0, 0]);
+// gameControl.playRound([0, 2]);
+// gameControl.playRound([2, 0]);
+// gameControl.playRound([2, 2]);
+//
+// gameBoard.reset();
+// console.log("prova diagonale");
+// gameControl.playRound([0, 0]);
+// gameControl.playRound([0, 1]);
+// gameControl.playRound([1, 1]);
+// gameControl.playRound([2, 0]);
+// gameControl.playRound([2, 2]);

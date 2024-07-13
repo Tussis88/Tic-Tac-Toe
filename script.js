@@ -39,6 +39,7 @@ const gameControl = (function () {
   let currentPlayer = player1;
 
   const getCurrentPlayer = () => currentPlayer;
+  const getIsWon = () => isWon;
   const getPlayer1 = () => player1;
   const getPlayer2 = () => player2;
   const reset = () => {
@@ -51,18 +52,19 @@ const gameControl = (function () {
     currentPlayer = currentPlayer === player1 ? player2 : player1;
   };
   const playRound = (cell) => {
-    console.log(`${getCurrentPlayer().getName()}'s turn.`);
+    // console.log(`${getCurrentPlayer().getName()}'s turn.`);
     const [row, col] = cell;
     const board = gameBoard.getBoard();
     if (board[row][col].getValue().getToken || isWon) return;
     gameBoard.addToken(cell, getCurrentPlayer());
-    gameBoard.printBoard();
+    // gameBoard.printBoard();
     if (winCheck()) {
-      if (!isWon) currentPlayer.setPoints();
+      currentPlayer.setPoints();
       isWon = true;
+      return;
     }
-    if (!isWon) switchTurn();
-    console.log(`next turn: ${getCurrentPlayer().getName()}`);
+    switchTurn();
+    // console.log(`next turn: ${getCurrentPlayer().getName()}`);
   };
 
   const winCheck = () => {
@@ -99,7 +101,7 @@ const gameControl = (function () {
     reset,
     switchTurn,
     playRound,
-    winCheck,
+    getIsWon,
   };
 })();
 
@@ -156,7 +158,7 @@ const domLogic = (function () {
       });
     });
 
-    if (gameControl.winCheck()) {
+    if (gameControl.getIsWon()) {
       dialogScreen.showModal();
       winnerText.innerText = `${activePlayer.getName()} wins`;
       restartButton.addEventListener("click", function () {

@@ -33,8 +33,8 @@ const gameBoard = (function () {
 })();
 
 const gameControl = (function () {
-  const player1 = createPlayer("player 1", "O");
-  const player2 = createPlayer("player 2", "X");
+  const player1 = createPlayer("O");
+  const player2 = createPlayer("X");
   let isWon = false;
   let currentPlayer = player1;
 
@@ -55,6 +55,7 @@ const gameControl = (function () {
     // console.log(`${getCurrentPlayer().getName()}'s turn.`);
     const [row, col] = cell;
     const board = gameBoard.getBoard();
+
     if (board[row][col].getValue().getToken || isWon) return;
     gameBoard.addToken(cell, getCurrentPlayer());
     // gameBoard.printBoard();
@@ -116,16 +117,17 @@ function Cell() {
   return { addTokenInCell, getValue };
 }
 
-function createPlayer(inputName, tokenType) {
-  const name = inputName;
+function createPlayer(tokenType) {
+  let name = "name";
   let points = 0;
   const token = tokenType;
 
   const getName = () => name;
+  const setName = (newName) => name = newName; 
   const getToken = () => token;
   const getPoints = () => points;
   const setPoints = () => points++;
-  return { getName, getPoints, getToken, setPoints };
+  return { getName, setName, getPoints, getToken, setPoints };
 }
 
 const domLogic = (function () {
@@ -133,9 +135,14 @@ const domLogic = (function () {
   const player1Div = document.querySelector(".player1");
   const player2Div = document.querySelector(".player2");
   const boardDiv = document.querySelector(".board");
+
   const dialogScreen = document.querySelector(".dialog");
   const winnerText = dialogScreen.querySelector(".winner");
   const restartButton = dialogScreen.querySelector(".restart");
+
+  const dialogStart = document.querySelector(".start");
+  const startForm = dialogStart.querySelector("form");
+  const startButton = dialogStart.querySelector("#start");
 
   const updateScreen = () => {
     boardDiv.textContent = "";
@@ -161,7 +168,7 @@ const domLogic = (function () {
     if (gameControl.getIsWon()) {
       dialogScreen.showModal();
       winnerText.innerText = `${activePlayer.getName()} wins`;
-      restartButton.addEventListener("click", function () {
+      restartButton.addEventListener("click", () => {
         gameControl.reset();
         domLogic.updateScreen();
         dialogScreen.close();
@@ -178,37 +185,23 @@ const domLogic = (function () {
     updateScreen();
   }
 
+  const startMenu = () => {
+    startButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      const p1name = startForm.p1name.value;
+      const p2name = startForm.p2name.value;
+      gameControl.getPlayer1().setName(p1name);
+      gameControl.getPlayer2().setName(p2name);
+      dialogStart.close();
+      updateScreen();
+    });
+    dialogStart.showModal();
+  };
+
   boardDiv.addEventListener("click", clickCell);
-  return { updateScreen };
+  return { updateScreen, startMenu };
 })();
 
 gameControl.reset();
 domLogic.updateScreen();
-///////////////
-// run
-// console.log("prova row");
-// gameBoard.reset();
-// gameControl.playRound([1, 0]);
-// gameControl.playRound([0, 1]);
-// gameControl.playRound([1, 1]);
-// gameControl.playRound([2, 1]);
-// gameControl.playRound([1, 2]);
-// gameControl.playRound([0, 0]);
-// domLogic.updateScreen();
-//
-// gameBoard.reset();
-// console.log("prova col");
-// gameControl.playRound([1, 1]);
-// gameControl.playRound([1, 2]);
-// gameControl.playRound([0, 0]);
-// gameControl.playRound([0, 2]);
-// gameControl.playRound([2, 0]);
-// gameControl.playRound([2, 2]);
-//
-// gameBoard.reset();
-// console.log("prova diagonale");
-// gameControl.playRound([0, 0]);
-// gameControl.playRound([0, 1]);
-// gameControl.playRound([1, 1]);
-// gameControl.playRound([2, 0]);
-// gameControl.playRound([2, 2]);
+domLogic.startMenu();

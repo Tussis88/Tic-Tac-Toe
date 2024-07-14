@@ -1,3 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fragment+Mono:ital@0;1&family=Rubik+Mono+One&display=swap');
+
+
+:root {
+    --white: #DCD7BA;
+    --background: #1F1F28;
+    --green: #76946A;
+    --red: #C34043;
+    --yellow: #DCA561;
+    --violet: #957FB8;
+    --blue: #7E9CD8;
+    --grey: #717C7C;
+    --shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background-color: var(--background);
+    color: var(--white);
+    font-family: "Fragment Mono", monospace;
+}
+
+.container {
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.cell {
+    font-family: "Rubik Mono One", monospace;
+    color: var(--background);
+    font-size: 60px;
+    width: 100px;
+    height: 100px;
+    background-color: var(--white);
+    border: none;
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+
+    &:hover {
+        background-color: var(--yellow);
+    }
+}
+
+.turn {
+    margin: 0;
+}
+
 h1 {
-    color: rebeccapurple;
+    text-align: center;
+    font-size: 5em;
+    font-weight: 700;
+    margin: 20px auto;
+    color: var(--green);
+    margin-bottom: 100px;
+}
+
+.ui {
+    color: var(--violet);
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.points {
+    font-size: 0.9em;
+}
+
+.player1,
+.player2 {
+    margin: 0;
+}
+
+dialog::backdrop {
+    background-color: rgba(15, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+dialog {
+    padding: 20px;
+    border-color: var(--green);
+    background-color: var(--background);
+    position: absolute;
+    /* top: 50%;
+    left: 50%; */
+    /* transform: translate(-50%, -50%); */
+    color: var(--white);
+    border-radius: 20px;
+}
+
+label {
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+input {
+    font-family: "Fragment Mono", monospace;
+    width: 20em;
+    height: 2em;
+    border-radius: 10px;
+    padding: 0 20px;
+    color: var(--white);
+    font-size: 0.9em;
+    border: none;
+    margin-top: 3px;
+    margin-bottom: 8px;
+    background-color: #717C7C;
+
+    &:focus {
+        outline: 2px solid var(--green);
+        box-shadow: var(--shadow);
+    }
+}
+
+dialog button {
+    font-family: "Fragment Mono", monospace;
+    background-color: var(--green);
+    color: var(--white);
+    font-weight: 700;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: var(--white);
+        color: var(--green);
+    }
+}
+
+.winner {
+    font-size: 3em;
+    font-weight: 700;
+    color: var(--white);
+    margin: 30px 100px;
 }
